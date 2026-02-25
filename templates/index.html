@@ -1,1 +1,311 @@
+<!doctype html>
+<html lang="es" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIARENÉ - Tienda de Ropa</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;family=Lato:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <style>
+    .font-display { font-family: 'Playfair Display', serif; }
+    .font-body { font-family: 'Lato', sans-serif; }
+    .product-card { transition: all 0.3s ease; }
+    .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+    .btn-elegant { transition: all 0.3s ease; }
+    .btn-elegant:hover { transform: scale(1.02); }
+    .fade-in { animation: fadeIn 0.5s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .modal-overlay { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+    body { box-sizing: border-box; }
+  </style>
+ </head>
+ <body class="h-full font-body" style="background: linear-gradient(135deg, #fdf6f0 0%, #f5ebe0 100%);">
+  <div id="app" class="h-full w-full overflow-auto">
+   
+   <header class="sticky top-0 z-40" style="background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+     <div class="flex items-center justify-between">
+      <button onclick="openAdminPanel()" class="p-2 rounded-full transition-all hover:bg-white/10" style="color: #d4a574;" title="Panel de Administración">
+       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewbox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+      </button>
 
+      <div class="text-center flex-1">
+       <h1 class="font-display text-3xl md:text-4xl tracking-widest" style="color: #d4a574;">CIARENÉ</h1>
+       <p class="text-xs md:text-sm tracking-wider mt-1" style="color: #e8ddd4;">Elegancia y estilo para ti</p>
+      </div>
+
+      <button onclick="toggleCart()" class="relative p-2 rounded-full transition-all hover:bg-white/10" style="color: #d4a574;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+        <span id="cart-count" class="absolute top-0 right-0 bg-amber-600 text-white text-[10px] rounded-full h-5 w-5 flex items-center justify-center font-bold">0</span>
+      </button>
+     </div>
+    </div>
+   </header>
+
+   <section class="py-12 px-4 text-center">
+    <p class="font-display text-2xl md:text-3xl" style="color: #2c2c2c;">Bienvenida a nuestra colección</p>
+    <div class="w-24 h-0.5 mx-auto mt-4" style="background: #d4a574;"></div>
+   </section>
+
+   <section class="px-4 pb-8">
+    <div class="max-w-7xl mx-auto">
+     <div class="flex flex-wrap justify-center gap-3" id="category-filters">
+      <button onclick="filterByCategory('all')" class="category-btn px-6 py-2 rounded-full text-sm font-medium transition-all" style="background: #2c2c2c; color: #fdf6f0;"> Todos </button>
+      <button onclick="filterByCategory('vestidos')" class="category-btn px-6 py-2 rounded-full text-sm font-medium transition-all bg-white/80 hover:bg-white" style="color: #2c2c2c;"> Vestidos </button>
+      <button onclick="filterByCategory('blusas')" class="category-btn px-6 py-2 rounded-full text-sm font-medium transition-all bg-white/80 hover:bg-white" style="color: #2c2c2c;"> Blusas </button>
+      <button onclick="filterByCategory('pantalones')" class="category-btn px-6 py-2 rounded-full text-sm font-medium transition-all bg-white/80 hover:bg-white" style="color: #2c2c2c;"> Pantalones </button>
+      <button onclick="filterByCategory('faldas')" class="category-btn px-6 py-2 rounded-full text-sm font-medium transition-all bg-white/80 hover:bg-white" style="color: #2c2c2c;"> Faldas </button>
+      <button onclick="filterByCategory('accesorios')" class="category-btn px-6 py-2 rounded-full text-sm font-medium transition-all bg-white/80 hover:bg-white" style="color: #2c2c2c;"> Accesorios </button>
+     </div>
+    </div>
+   </section>
+
+   <section class="px-4 pb-16 max-w-7xl mx-auto">
+     <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+     <div id="empty-state" class="hidden text-center py-16">
+      <p class="text-6xl mb-4">👗</p>
+      <p class="font-display text-xl" style="color: #2c2c2c;">No hay productos aún</p>
+     </div>
+   </section>
+
+   <footer class="py-8 px-4 text-center" style="background: #2c2c2c;">
+    <p class="font-display text-lg tracking-widest" style="color: #d4a574;">CIARENÉ</p>
+    <p class="text-xs mt-2" style="color: #e8ddd4;">© 2024 - Todos los derechos reservados</p>
+   </footer>
+
+   <div id="cart-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-end">
+     <div class="bg-white h-full w-full max-w-md shadow-2xl p-6 flex flex-col fade-in">
+       <div class="flex justify-between items-center border-b pb-4 mb-4">
+         <h2 class="font-display text-2xl text-gray-800">Tu Carrito</h2>
+         <button onclick="toggleCart()" class="p-2 hover:bg-gray-100 rounded-full">✕</button>
+       </div>
+       <div id="cart-items" class="flex-1 overflow-y-auto space-y-4"></div>
+       <div class="border-t pt-4 mt-4">
+         <div class="flex justify-between text-xl font-bold mb-6 text-gray-800">
+           <span class="font-display">Total estimando:</span>
+           <span id="cart-total" style="color: #d4a574;">$0.00</span>
+         </div>
+         <button onclick="sendWhatsApp()" class="w-full py-4 rounded-lg font-bold text-white transition-all btn-elegant" style="background: #25D366;">
+           PEDIR POR WHATSAPP
+         </button>
+       </div>
+     </div>
+   </div>
+
+   <div id="password-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+     <div class="p-6 border-b text-white" style="background: #2c2c2c;">
+      <h2 class="font-display text-xl" style="color: #d4a574;">Acceso Protegido</h2>
+     </div>
+     <div class="p-6 space-y-4">
+      <input type="password" id="admin-password" class="w-full px-4 py-3 rounded-lg border border-gray-200" placeholder="Contraseña">
+      <div class="flex gap-3">
+       <button onclick="closePasswordModal()" class="flex-1 py-2 px-4 border rounded-lg">Cancelar</button>
+       <button onclick="verifyPassword()" class="flex-1 py-2 px-4 rounded-lg font-medium" style="background: #d4a574; color: #2c2c2c;">Ingresar</button>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <div id="admin-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90%] overflow-auto">
+     <div class="p-6 border-b text-white" style="background: #2c2c2c;">
+      <div class="flex items-center justify-between">
+       <h2 class="font-display text-xl" style="color: #d4a574;">Agregar Producto</h2>
+       <button onclick="closeAdminPanel()" class="text-white">✕</button>
+      </div>
+     </div>
+     <form id="product-form" class="p-6 space-y-4">
+      <input type="text" id="product-name" required class="w-full px-4 py-3 border rounded-lg" placeholder="Nombre del Producto *">
+      <div class="grid grid-cols-2 gap-4">
+       <input type="number" id="product-price" required step="0.01" class="w-full px-4 py-3 border rounded-lg" placeholder="Precio *">
+       <select id="product-category" required class="w-full px-4 py-3 border rounded-lg">
+        <option value="vestidos">Vestidos</option><option value="blusas">Blusas</option><option value="pantalones">Pantalones</option><option value="faldas">Faldas</option><option value="accesorios">Accesorios</option>
+       </select>
+      </div>
+      <textarea id="product-description" rows="2" class="w-full px-4 py-3 border rounded-lg" placeholder="Descripción..."></textarea>
+      <div class="grid grid-cols-2 gap-4">
+       <input type="text" id="product-color" class="w-full px-4 py-3 border rounded-lg" placeholder="Color">
+       <input type="text" id="product-size" class="w-full px-4 py-3 border rounded-lg" placeholder="Talla">
+      </div>
+      <div id="image-preview" class="w-full h-40 rounded-lg border-2 border-dashed flex items-center justify-center cursor-pointer bg-gray-50" onclick="document.getElementById('product-image').click()">
+        <p class="text-gray-400">Subir Imagen 📸</p>
+      </div>
+      <input type="file" id="product-image" accept="image/*" class="hidden">
+      <input type="hidden" id="selected-image">
+      <button type="submit" class="w-full py-4 rounded-lg font-bold btn-elegant" style="background: #d4a574; color: #2c2c2c;"> GUARDAR PRODUCTO </button>
+     </form>
+    </div>
+   </div>
+
+   <div id="product-detail-modal" class="hidden fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+     <div id="product-detail-content"></div>
+    </div>
+   </div>
+
+   <div id="toast" class="hidden fixed bottom-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white bg-gray-900"><span id="toast-message"></span></div>
+
+  </div>
+
+  <script>
+    const ADMIN_PASSWORD = 'ciarene123';
+    let isAdminAuthenticated = false;
+    let products = [];
+    let cart = [];
+    let currentFilter = 'all';
+
+    // 1. CARGA DE DATOS DESDE PYTHON
+    async function loadData() {
+      try {
+        const res = await fetch('/api/productos');
+        products = await res.json();
+        renderProducts();
+      } catch (e) { console.error(e); }
+    }
+    loadData();
+
+    // 2. RENDERIZADO CON TU DISEÑO ORIGINAL
+    function renderProducts() {
+      const grid = document.getElementById('products-grid');
+      const filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
+      
+      grid.innerHTML = filtered.map((p, i) => `
+        <div class="product-card rounded-2xl overflow-hidden shadow-lg bg-white fade-in" style="animation-delay: ${i*0.1}s">
+          <div class="aspect-square flex items-center justify-center bg-gray-50 overflow-hidden cursor-pointer" onclick="showProductDetail('${p.__backendId}')">
+            ${p.image_data ? `<img src="${p.image_data}" class="w-full h-full object-cover">` : '<span class="text-6xl">👗</span>'}
+          </div>
+          <div class="p-4">
+            <p class="text-xs uppercase tracking-wider text-amber-600 mb-1">${p.category}</p>
+            <h3 class="font-display text-lg font-semibold mb-1">${p.name}</h3>
+            <div class="flex items-center justify-between mt-4">
+              <p class="font-display text-xl font-bold text-gray-800">$${parseFloat(p.price).toFixed(2)}</p>
+              <button onclick="addToCart('${p.__backendId}')" class="p-2 rounded-full bg-gray-900 text-white hover:bg-amber-600 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 3. LÓGICA DEL CARRITO Y WHATSAPP
+    function addToCart(id) {
+      const p = products.find(item => item.__backendId === id);
+      cart.push(p);
+      updateCartUI();
+      showToast("Agregado al carrito ✨");
+    }
+
+    function updateCartUI() {
+      document.getElementById('cart-count').textContent = cart.length;
+      const list = document.getElementById('cart-items');
+      let total = 0;
+      list.innerHTML = cart.map((item, index) => {
+        total += parseFloat(item.price);
+        return `
+          <div class="flex gap-4 items-center border-b pb-4">
+            <div class="h-16 w-16 bg-gray-100 rounded overflow-hidden">
+               ${item.image_data ? `<img src="${item.image_data}" class="w-full h-full object-cover">` : '👗'}
+            </div>
+            <div class="flex-1">
+              <p class="font-bold text-gray-800">${item.name}</p>
+              <p class="text-amber-600">$${item.price}</p>
+            </div>
+            <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500">✕</button>
+          </div>`;
+      }).join('');
+      document.getElementById('cart-total').textContent = `$${total.toFixed(2)}`;
+    }
+
+    function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
+    function toggleCart() { document.getElementById('cart-modal').classList.toggle('hidden'); }
+
+    function sendWhatsApp() {
+      if(cart.length === 0) return showToast("El carrito está vacío");
+      let text = "¡Hola CIARENÉ! Quiero comprar:\n\n";
+      cart.forEach(item => text += `• ${item.name} ($${item.price})\n`);
+      text += `\n*Total: ${document.getElementById('cart-total').textContent}*`;
+      window.open(`https://wa.me/573122997227?text=${encodeURIComponent(text)}`);
+    }
+
+    // 4. FUNCIONES ORIGINALES RESTAURADAS
+    function filterByCategory(cat) {
+      currentFilter = cat;
+      const btns = document.querySelectorAll('.category-btn');
+      btns.forEach(b => { b.style.background = 'rgba(255,255,255,0.8)'; b.style.color = '#2c2c2c'; });
+      event.target.style.background = '#2c2c2c';
+      event.target.style.color = 'white';
+      renderProducts();
+    }
+
+    function openAdminPanel() { 
+      if(!isAdminAuthenticated) document.getElementById('password-modal').classList.remove('hidden');
+      else document.getElementById('admin-modal').classList.remove('hidden');
+    }
+
+    function verifyPassword() {
+      if(document.getElementById('admin-password').value === ADMIN_PASSWORD) {
+        isAdminAuthenticated = true;
+        document.getElementById('password-modal').classList.add('hidden');
+        document.getElementById('admin-modal').classList.remove('hidden');
+      } else { alert("Error"); }
+    }
+
+    function closeAdminPanel() { document.getElementById('admin-modal').classList.add('hidden'); }
+    function closePasswordModal() { document.getElementById('password-modal').classList.add('hidden'); }
+
+    document.getElementById('product-image').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        document.getElementById('selected-image').value = ev.target.result;
+        document.getElementById('image-preview').innerHTML = `<img src="${ev.target.result}" class="h-full w-full object-cover">`;
+      };
+      if(file) reader.readAsDataURL(file);
+    });
+
+    document.getElementById('product-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const p = {
+        name: document.getElementById('product-name').value,
+        price: document.getElementById('product-price').value,
+        category: document.getElementById('product-category').value,
+        description: document.getElementById('product-description').value,
+        image_data: document.getElementById('selected-image').value
+      };
+      const res = await fetch('/api/productos', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(p)
+      });
+      if(res.ok) { showToast("Guardado"); location.reload(); }
+    });
+
+    function showProductDetail(id) {
+      const p = products.find(i => i.__backendId === id);
+      document.getElementById('product-detail-content').innerHTML = `
+        <div class="aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
+          ${p.image_data ? `<img src="${p.image_data}" class="w-full h-full object-cover">` : '👗'}
+        </div>
+        <div class="p-6">
+          <h3 class="font-display text-2xl mb-2">${p.name}</h3>
+          <p class="text-gray-500 mb-6">${p.description || ''}</p>
+          <div class="flex gap-4">
+            <button onclick="addToCart('${p.__backendId}')" class="flex-1 py-3 bg-gray-900 text-white rounded-lg">Agregar al Carrito</button>
+            <button onclick="document.getElementById('product-detail-modal').classList.add('hidden')" class="px-6 border rounded-lg">Cerrar</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('product-detail-modal').classList.remove('hidden');
+    }
+
+    function showToast(m) { 
+      const t = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = m;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 3000);
+    }
+  </script>
+ </body>
+</html>
